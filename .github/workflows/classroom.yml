@@ -1,0 +1,71 @@
+name: GitHub Classroom Workflow
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tests/**'
+      - 'ex*.py'
+      - 'samples/**'
+      - 'grading.toml'
+  workflow_dispatch:
+
+jobs:
+  autograding:
+    name: Autograding
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.13
+
+      - name: Install dependencies
+        run: uv sync
+
+      # --- 非公開テスト・採点設定の取得（solution ブランチから） ---
+      - name: Fetch hidden tests and grading config
+        uses: actions/checkout@v4
+        with:
+          repository: kjst-edu-classroom/template-1-03
+          ref: solution
+          path: _solution
+          token: ${{ secrets.TEMPLATE_TOKEN }}
+          sparse-checkout: |
+            tests_hidden
+            grading.toml
+          sparse-checkout-cone-mode: false
+
+      - name: Copy hidden tests and grading config
+        run: |
+          cp -r _solution/tests_hidden .
+          cp _solution/grading.toml .
+
+      # --- サマリー書き出し（run: ステップで GITHUB_STEP_SUMMARY に確実に書く） ---
+      - name: Write Grade Summary
+        continue-on-error: true
+        run: uv run python .github/grader.py
+
+      # --- 採点（autograding-command-grader でスコア報告） ---
+      - name: Grade
+        id: grade
+        uses: education/autograding-command-grader@v1
+        with:
+          test-name: "Auto Grade"
+          command: "uv run python .github/grader.py"
+          timeout: "10"
+          max-score: "100"
+
+      - name: Autograding Reporter
+        uses: education/autograding-grading-reporter@v1
+        env:
+          GRADE_RESULTS: "${{ steps.grade.outputs.result }}"
+        with:
+          runners: grade

@@ -1,0 +1,7 @@
+INFO 2026-05-01 09:00:12 start
+DEBUG 2026-05-01 09:00:13 loading config
+INFO 2026-05-01 09:00:15 ready
+ERROR 2026-05-01 09:01:02 failed to connect
+DEBUG 2026-05-01 09:01:03 retry count = 1
+ERROR 2026-05-01 09:01:05 timeout
+INFO 2026-05-01 09:02:00 finished
