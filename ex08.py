@@ -36,5 +36,6 @@ while True:
         line = input()
     except EOFError:
         break
-    if line.____() != ____:    # ヒント: 前後の空白除去メソッドと、空文字列リテラル
+   
+    if line.strip() != "":    # ヒント: 前後の空白除去メソッドと、空文字列リテラル
         print(line)

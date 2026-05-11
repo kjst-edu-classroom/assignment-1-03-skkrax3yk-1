@@ -2,8 +2,7 @@
 スクリプト課題 04: try-except EOFError — 入力が終わったら抜ける（穴埋め少）
 
 実行方法:
-    cat samples/sample_text.txt | uv run ex04.py
-
+    
 --- 解説 ---
 
 ファイルやパイプから入力を受けるときは、q のような終了文字は使えません。
@@ -15,7 +14,7 @@
         try:
             line = input()
         except EOFError:
-            break
+            brecat 
         # 1行ごとの処理
 
 `try-except` は「やってみて、ダメだったら別の処理」というイメージです。
@@ -34,6 +33,6 @@
 while True:
     try:
         line = input()
-    except ____:           # ヒント: どの例外を受け取る？
+    except EOFError:       # ヒント: どの例外を受け取る？
         break
-    print(____)            # ヒント: 読み込んだ1行
+    print(line)            # ヒント: 読み込んだ1行
